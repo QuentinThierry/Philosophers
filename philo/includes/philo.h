@@ -6,7 +6,7 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 00:43:55 by qthierry          #+#    #+#             */
-/*   Updated: 2023/05/22 02:24:34 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/05/23 02:18:03 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@
 #include <unistd.h>
 #include <stdbool.h>
 #include <sys/time.h>
+#include <errno.h>
+#include <string.h>
 
 typedef struct timeval t_timeval;
 
@@ -36,11 +38,11 @@ enum	e_times
 	t_die
 };
 
-typedef struct s_main
+typedef struct s_fork
 {
-	bool	is_end;
-	int		*nb_meals;
-}	t_main;
+	pthread_mutex_t	mut;
+	bool			is_taken;
+}	t_fork;
 
 typedef struct s_philo
 {
@@ -50,7 +52,11 @@ typedef struct s_philo
 	enum e_state	state;
 	bool			has_l_fork;
 	bool			has_r_fork;
-	bool			is_dead;
+	bool			*is_end;
+	pthread_mutex_t	*mut_end;
+	t_fork			*forks;
+	struct s_philo	*all_philos;
+	size_t			nb_philos;
 }	t_philo;
 
 #endif
