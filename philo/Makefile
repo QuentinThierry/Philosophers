@@ -6,7 +6,7 @@
 #    By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/22 00:29:38 by qthierry          #+#    #+#              #
-#    Updated: 2023/05/24 00:48:03 by qthierry         ###   ########.fr        #
+#    Updated: 2023/05/24 19:30:04 by qthierry         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,17 @@ HEADERS_DIR = ./includes/
 HEADERS = $(addprefix $(HEADERS_DIR), $(HEADERS_LIST))
 
 SRC_LIST = \
-			main.c
+			eat.c \
+			forks.c \
+			ft_atoi.c \
+			init.c \
+			main.c \
+			memory.c \
+			on_death.c \
+			parsing.c \
+			philo_utils.c \
+			print_event.c \
+			time.c
 
 SRC_DIR = ./src/
 SRC = $(addprefix $(SRC_DIR), $(SRC_LIST))
