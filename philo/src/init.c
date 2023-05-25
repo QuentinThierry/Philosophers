@@ -6,14 +6,14 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/24 18:25:20 by qthierry          #+#    #+#             */
-/*   Updated: 2023/05/24 18:25:31 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/05/25 20:28:02 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo.h"
 
 static bool	init_mutexs(pthread_mutex_t **mut_end, pthread_mutex_t **mut_print,
-		pthread_mutex_t **mut_eat_end)
+		pthread_mutex_t **mut_eat_end,pthread_mutex_t **mut_last_meal)
 {
 	*mut_end = ft_calloc(1, sizeof(pthread_mutex_t));
 	if (!*mut_end)
@@ -24,9 +24,13 @@ static bool	init_mutexs(pthread_mutex_t **mut_end, pthread_mutex_t **mut_print,
 	*mut_eat_end = ft_calloc(1, sizeof(pthread_mutex_t));
 	if (!*mut_eat_end)
 		return (free(*mut_end), free(*mut_print), false);
+	*mut_last_meal = ft_calloc(1, sizeof(pthread_mutex_t));
+	if (!*mut_last_meal)
+		return (free(*mut_end), free(*mut_print), free(mut_eat_end), false);
 	**mut_end = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
 	**mut_print = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
 	**mut_eat_end = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
+	**mut_last_meal = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
 	return (true);
 }
 
@@ -45,8 +49,9 @@ bool	fill_philo_1(t_philo *philos)
 	pthread_mutex_t	*mut_end;
 	pthread_mutex_t	*mut_print;
 	pthread_mutex_t	*mut_eat_end;
+	pthread_mutex_t	*mut_last_meal;
 
-	if (!init_mutexs(&mut_end, &mut_print, &mut_eat_end))
+	if (!init_mutexs(&mut_end, &mut_print, &mut_eat_end, &mut_last_meal))
 		return (false);
 	i = 0;
 	while (i < philos->nb_philos)
@@ -56,7 +61,7 @@ bool	fill_philo_1(t_philo *philos)
 		philos[i].mut_end = mut_end;
 		philos[i].mut_eat_end = mut_eat_end;
 		philos[i].mut_print = mut_print;
-		philos[i].all_philos = philos;
+		philos[i].mut_last_meal = mut_last_meal;
 		i++;
 	}
 	return (true);
@@ -67,9 +72,11 @@ bool	fill_philo_2(t_philo *philos)
 	t_fork			*forks;
 	bool			*is_end;
 	t_timeval		start_time;
+	long			last_meal;
 	size_t			i;
 
 	gettimeofday(&start_time, NULL);
+	last_meal = get_timestamp(start_time);
 	if (!init_callocs(&forks, &is_end, philos->nb_philos))
 	{
 		pthread_mutex_destroy(philos->mut_end);
@@ -78,6 +85,8 @@ bool	fill_philo_2(t_philo *philos)
 		free(philos->mut_print);
 		pthread_mutex_destroy(philos->mut_eat_end);
 		free(philos->mut_eat_end);
+		pthread_mutex_destroy(philos->mut_last_meal);
+		free(philos->mut_last_meal);
 		return (false);
 	}
 	i = 0;
@@ -86,6 +95,7 @@ bool	fill_philo_2(t_philo *philos)
 		philos[i].is_end = is_end;
 		philos[i].forks = forks;
 		philos[i].start_time = start_time;
+		philos[i].last_meal = last_meal;
 		forks[i++].mut = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
 	}
 	return (true);

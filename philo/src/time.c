@@ -6,30 +6,23 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/24 18:21:31 by qthierry          #+#    #+#             */
-/*   Updated: 2023/05/24 19:28:33 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/05/25 19:26:27 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo.h"
 
-static inline double	calculate_delay(t_timeval *before)
+long	get_timestamp(t_timeval start_time)
 {
 	t_timeval	time;
-	double		delay;
 
 	gettimeofday(&time, NULL);
-	delay = (time.tv_usec - before->tv_usec)
-		+ (time.tv_sec - before->tv_sec) * CLOCKS_PER_SEC;
-	*before = time;
-	return (delay / 1000);
+	time.tv_sec -= start_time.tv_sec;
+	time.tv_usec -= start_time.tv_usec;
+	return (time.tv_sec * 1000 + time.tv_usec / 1000);
 }
 
-void	refresh_time(t_timeval *before, double *timestamps)
+long	get_time_diff(t_timeval start_time, long t_before)
 {
-	double	tmp;
-
-	tmp = calculate_delay(before);
-	timestamps[delay] += tmp;
-	timestamps[timestamp] += tmp;
-	timestamps[last_meal] += tmp;
+	return (get_timestamp(start_time) - t_before);
 }

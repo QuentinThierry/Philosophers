@@ -6,7 +6,7 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 00:38:45 by qthierry          #+#    #+#             */
-/*   Updated: 2023/05/24 22:53:10 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/05/25 22:10:18 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,15 +17,17 @@ static inline bool	begin_sleep(t_philo *philo,
 {
 	if (get_is_dead(philo))
 		return (false);
+	pthread_mutex_lock(philo->mut_last_meal);
+	philo->last_meal = get_timestamp(philo->start_time);
+	pthread_mutex_unlock(philo->mut_last_meal);
 	pthread_mutex_lock(philo->mut_eat_end);
 	if (philo->eat_to_end > -1)
 		philo->eat_to_end--;
 	pthread_mutex_unlock(philo->mut_eat_end);
 	print_event(philo, act_time, timestamps, "is sleeping");
+	philo->begin_sleep = get_timestamp(philo->start_time);
 	philo->state = get_next_state(philo->state);
 	release_forks(philo);
-	timestamps[last_meal] = 0;
-	timestamps[delay] = 0;
 	return (true);
 }
 
@@ -36,28 +38,25 @@ static inline bool	begin_think(t_philo *philo,
 		return (false);
 	print_event(philo, act_time, timestamps, "is thinking");
 	philo->state = get_next_state(philo->state);
-	timestamps[delay] = 0;
 	return (true);
 }
 
 static inline bool	philo_routine2(t_philo *philo,
 	t_timeval *act_time, double *timestamps)
 {
+	// printf("last sleep : %ld \n", get_time_diff(philo->start_time, philo->begin_sleep));
 	if (philo->state == thinking)
 	{
-		if (get_is_dead(philo))
-			return (NULL);
 		try_to_eat(philo, act_time, timestamps);
-		timestamps[delay] = 0;
 	}
 	else if (philo->state == eating
-		&& timestamps[delay] >= philo->times[t_eat])
+		&& get_time_diff(philo->start_time, philo->begin_eat) >= philo->times[t_eat])
 	{
 		if (!begin_sleep(philo, act_time, timestamps))
-			return (NULL);
+			return (false);
 	}
 	else if (philo->state == sleeping
-		&& timestamps[delay] >= philo->times[t_sleep])
+		&& get_time_diff(philo->start_time, philo->begin_sleep) >= philo->times[t_sleep])
 	{
 		if (!begin_think(philo, act_time, timestamps))
 			return (false);
@@ -78,15 +77,10 @@ void	*philo_routine(void *arg)
 		usleep(1000);
 	while (true)
 	{
-		usleep(1);
-		refresh_time(&act_time, timestamps);
+		usleep(10);
 		if (get_is_dead(philo))
-			return (NULL);
-		if ((long)timestamps[last_meal] >= philo->times[t_die])
-			return (broadcast_death(philo, &act_time, timestamps, 1), NULL);
-		if (philo->eat_to_end > -2 && has_all_eaten(philo))
-			return (broadcast_death(philo, &act_time, timestamps, 0), NULL);
-		else if (!philo_routine2(philo, &act_time, timestamps))
+			return (false);
+		if (!philo_routine2(philo, &act_time, timestamps))
 			return (NULL);
 	}
 	return (NULL);
@@ -96,6 +90,7 @@ int	main(int argc, char **argv)
 {
 	t_philo		*philos;
 	size_t		i;
+	bool		end;
 
 	if (!parsing(argc, argv, &philos))
 		return (false);
@@ -106,6 +101,30 @@ int	main(int argc, char **argv)
 	{
 		pthread_create(&philos[i].thread, NULL, philo_routine, &philos[i]);
 		i++;
+	}
+	i = 0;
+	end = false;
+	while (!end)
+	{
+		usleep(1000);
+		i = 0;
+		// if (philos->eat_to_end != -2 && has_all_eaten(philos))
+		// {
+		// 	broadcast_death(philos, false);
+		// 	break ;
+		// }
+		pthread_mutex_lock(philos->mut_last_meal);
+		while (i < philos->nb_philos)
+		{
+			if (get_timestamp(philos[i].start_time) - philos[i].last_meal >= philos->times[t_die])
+			{
+				broadcast_death(&philos[i], get_timestamp(philos[i].start_time), true);
+				end = true;
+				break ;
+			}
+			i++;
+		}
+		pthread_mutex_unlock(philos->mut_last_meal);
 	}
 	i = 0;
 	while (i < philos->nb_philos)

@@ -6,7 +6,7 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 00:43:55 by qthierry          #+#    #+#             */
-/*   Updated: 2023/05/24 19:32:00 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/05/25 22:05:22 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,9 +64,12 @@ typedef struct s_philo
 	pthread_mutex_t	*mut_end;
 	pthread_mutex_t	*mut_print;
 	pthread_mutex_t	*mut_eat_end;
-	struct s_philo	*all_philos;
+	pthread_mutex_t	*mut_last_meal;
 	t_timeval		start_time;
 	t_fork			*forks;
+	int				last_meal;
+	int				begin_eat;
+	int				begin_sleep;
 	int				eat_to_end;
 }	t_philo;
 
@@ -92,8 +95,7 @@ void			free_philos(t_philo *philos);
 void			*ft_calloc(size_t nmemb, size_t size);
 
 // on_death.c
-void			broadcast_death(t_philo	*philo, t_timeval *act_time,
-					double *timestamps, bool has_print);
+void			broadcast_death(t_philo	*philo, long time, bool has_print);
 
 // parsing.c
 bool			parsing(int argc, char **argv, t_philo **philos);
@@ -109,6 +111,7 @@ bool			print_event(t_philo *philo, t_timeval *act_time,
 					double *timestamps, const char *message);
 
 // time.c
-void			refresh_time(t_timeval *before, double *timestamps);
+long			get_timestamp(t_timeval start_time);
+long			get_time_diff(t_timeval start_time, long t_before);
 
 #endif
