@@ -6,7 +6,7 @@
 #    By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/22 00:29:38 by qthierry          #+#    #+#              #
-#    Updated: 2023/05/26 19:35:42 by qthierry         ###   ########.fr        #
+#    Updated: 2023/05/26 19:49:45 by qthierry         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -43,8 +43,6 @@ OBJ_LIST = $(patsubst %.c, %.o, $(SRC_LIST))
 OBJ = $(addprefix $(OBJ_DIR), $(OBJ_LIST))
 
 all:	$(NAME)
-
-bonus:	all
 
 run: $(NAME)
 	./$(NAME)
