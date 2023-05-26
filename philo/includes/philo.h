@@ -6,7 +6,7 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 00:43:55 by qthierry          #+#    #+#             */
-/*   Updated: 2023/05/26 19:35:36 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/05/26 19:48:02 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,6 @@ typedef struct s_philo
 	pthread_mutex_t	*mut_print;
 	pthread_mutex_t	*mut_eat_end;
 	pthread_mutex_t	*mut_last_meal;
-	size_t			*running_threads;
 	t_timeval		*start_time;
 	t_fork			*forks;
 	long			last_meal;
