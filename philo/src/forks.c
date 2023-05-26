@@ -6,14 +6,13 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/24 18:23:37 by qthierry          #+#    #+#             */
-/*   Updated: 2023/05/24 18:24:00 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/05/26 16:30:56 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo.h"
 
-static bool	try_take_l_fork(t_philo *philo,
-							t_timeval *act_time, double *timestamps)
+static bool	try_take_l_fork(t_philo *philo)
 {
 	size_t	id;
 
@@ -25,15 +24,14 @@ static bool	try_take_l_fork(t_philo *philo,
 		{
 			philo->forks[id].is_taken = true;
 			philo->has_l_fork = true;
-			print_event(philo, act_time, timestamps, "has taken a fork");
+			print_event(philo, "has taken a fork");
 		}
 		pthread_mutex_unlock(&philo->forks[id].mut);
 	}
 	return (true);
 }
 
-static bool	try_take_r_fork(t_philo *philo,
-							t_timeval *act_time, double *timestamps)
+static bool	try_take_r_fork(t_philo *philo)
 {
 	size_t	id;
 
@@ -45,19 +43,19 @@ static bool	try_take_r_fork(t_philo *philo,
 		{
 			philo->forks[id].is_taken = true;
 			philo->has_r_fork = true;
-			print_event(philo, act_time, timestamps, "has taken a fork");
+			print_event(philo, "has taken a fork");
 		}
 		pthread_mutex_unlock(&philo->forks[id].mut);
 	}
 	return (true);
 }
 
-bool	try_take_forks(t_philo *philo, t_timeval *act_time, double *timestamps)
+bool	try_take_forks(t_philo *philo)
 {
 	if (philo->nb_philos == 1)
 		return (true);
-	try_take_l_fork(philo, act_time, timestamps);
-	try_take_r_fork(philo, act_time, timestamps);
+	try_take_l_fork(philo);
+	try_take_r_fork(philo);
 	return (true);
 }
 

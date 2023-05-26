@@ -6,14 +6,14 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/24 18:25:20 by qthierry          #+#    #+#             */
-/*   Updated: 2023/05/25 20:28:02 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/05/26 19:30:54 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo.h"
 
 static bool	init_mutexs(pthread_mutex_t **mut_end, pthread_mutex_t **mut_print,
-		pthread_mutex_t **mut_eat_end,pthread_mutex_t **mut_last_meal)
+		pthread_mutex_t **mut_eat_end, pthread_mutex_t **mut_last_meal)
 {
 	*mut_end = ft_calloc(1, sizeof(pthread_mutex_t));
 	if (!*mut_end)
@@ -71,12 +71,8 @@ bool	fill_philo_2(t_philo *philos)
 {
 	t_fork			*forks;
 	bool			*is_end;
-	t_timeval		start_time;
-	long			last_meal;
 	size_t			i;
 
-	gettimeofday(&start_time, NULL);
-	last_meal = get_timestamp(start_time);
 	if (!init_callocs(&forks, &is_end, philos->nb_philos))
 	{
 		pthread_mutex_destroy(philos->mut_end);
@@ -94,8 +90,6 @@ bool	fill_philo_2(t_philo *philos)
 	{
 		philos[i].is_end = is_end;
 		philos[i].forks = forks;
-		philos[i].start_time = start_time;
-		philos[i].last_meal = last_meal;
 		forks[i++].mut = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
 	}
 	return (true);

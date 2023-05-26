@@ -6,7 +6,7 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 00:43:55 by qthierry          #+#    #+#             */
-/*   Updated: 2023/05/25 22:05:22 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/05/26 19:35:36 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,27 +60,27 @@ typedef struct s_philo
 	enum e_state	state;
 	bool			has_l_fork;
 	bool			has_r_fork;
+	bool			*can_begin;
 	bool			*is_end;
 	pthread_mutex_t	*mut_end;
 	pthread_mutex_t	*mut_print;
 	pthread_mutex_t	*mut_eat_end;
 	pthread_mutex_t	*mut_last_meal;
-	t_timeval		start_time;
+	size_t			*running_threads;
+	t_timeval		*start_time;
 	t_fork			*forks;
-	int				last_meal;
-	int				begin_eat;
-	int				begin_sleep;
-	int				eat_to_end;
+	long			last_meal;
+	long			begin_eat;
+	long			begin_sleep;
+	long			eat_to_end;
 }	t_philo;
 
 // eat.c
-void			try_to_eat(t_philo *philo,
-					t_timeval *act_time, double *timestamps);
+void			try_to_eat(t_philo *philo);
 bool			has_all_eaten(t_philo *philo);
 
 // forks.c
-bool			try_take_forks(t_philo *philo,
-					t_timeval *act_time, double *timestamps);
+bool			try_take_forks(t_philo *philo);
 bool			release_forks(t_philo *philo);
 
 // ft_atoi.c
@@ -95,7 +95,7 @@ void			free_philos(t_philo *philos);
 void			*ft_calloc(size_t nmemb, size_t size);
 
 // on_death.c
-void			broadcast_death(t_philo	*philo, long time, bool has_print);
+void			broadcast_death(t_philo	*philo, bool has_print);
 
 // parsing.c
 bool			parsing(int argc, char **argv, t_philo **philos);
@@ -107,8 +107,10 @@ size_t			get_left_fork_id(t_philo *philo);
 size_t			get_right_fork_id(t_philo *philo);
 
 // print_event.c
-bool			print_event(t_philo *philo, t_timeval *act_time,
-					double *timestamps, const char *message);
+bool			print_event(t_philo *philo, const char *message);
+
+// philo_routine.c
+void			*philo_routine(void *arg);
 
 // time.c
 long			get_timestamp(t_timeval start_time);

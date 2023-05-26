@@ -6,7 +6,7 @@
 #    By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/22 00:29:38 by qthierry          #+#    #+#              #
-#    Updated: 2023/05/25 20:03:31 by qthierry         ###   ########.fr        #
+#    Updated: 2023/05/26 19:35:42 by qthierry         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,6 +32,7 @@ SRC_LIST = \
 			parsing.c \
 			philo_utils.c \
 			print_event.c \
+			philo_routine.c \
 			time.c
 
 SRC_DIR = ./src/

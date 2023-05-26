@@ -6,7 +6,7 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/24 18:24:11 by qthierry          #+#    #+#             */
-/*   Updated: 2023/05/25 20:02:31 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/05/26 17:17:24 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,14 +47,12 @@ bool	parsing(int argc, char **argv, t_philo **philos)
 	while (i < argc)
 	{
 		val = ft_atoi(argv[i], &has_error);
+		if (has_error || val <= 0)
+			return (printf("Invalid argument.\n"), false);
 		if (i == 1)
 			*philos = ft_calloc(val, sizeof(t_philo));
 		if (!*philos)
 			return (false);
-		if (has_error)
-			return (printf("Invalid argument.\n"), false);
-		if (val < 0)
-			return (printf("Negative argument.\n"), false);
 		fill_philos_value(i, *philos, val);
 		i++;
 	}

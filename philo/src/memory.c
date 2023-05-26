@@ -6,7 +6,7 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/24 18:20:52 by qthierry          #+#    #+#             */
-/*   Updated: 2023/05/24 18:21:16 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/05/26 19:32:36 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,8 @@ void	free_philos(t_philo *philos)
 	free(philos->mut_print);
 	pthread_mutex_destroy(philos->mut_eat_end);
 	free(philos->mut_eat_end);
+	pthread_mutex_destroy(philos->mut_last_meal);
+	free(philos->mut_last_meal);
 	free_forks(philos->forks, philos->nb_philos);
 	free(philos);
 }
