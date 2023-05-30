@@ -6,7 +6,7 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 00:38:45 by qthierry          #+#    #+#             */
-/*   Updated: 2023/05/26 19:34:23 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/05/28 22:40:56 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,8 @@ static bool	check_nb_eat(t_philo *philos)
 	pthread_mutex_lock(philos->mut_eat_end);
 	if (has_all_eaten(philos))
 	{
-		broadcast_death(philos, false);
 		pthread_mutex_unlock(philos->mut_eat_end);
+		broadcast_death(philos, false);
 		return (false);
 	}
 	pthread_mutex_unlock(philos->mut_eat_end);
@@ -35,8 +35,15 @@ static void	end_checker(t_philo *philos)
 	{
 		usleep(1000);
 		i = 0;
-		if (philos->eat_to_end != -2 && !check_nb_eat(philos))
-			break ;
+		pthread_mutex_lock(philos->mut_eat_end);
+		if (philos->eat_to_end != -2)
+		{
+			pthread_mutex_unlock(philos->mut_eat_end);
+			if (!check_nb_eat(philos))
+				break ;
+		}
+		else
+			pthread_mutex_unlock(philos->mut_eat_end);
 		pthread_mutex_lock(philos->mut_last_meal);
 		while (i < philos->nb_philos)
 		{
