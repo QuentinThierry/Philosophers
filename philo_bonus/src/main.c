@@ -6,80 +6,14 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/26 19:47:09 by qthierry          #+#    #+#             */
-/*   Updated: 2023/06/03 17:46:33 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/06/03 19:33:34 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo.h"
 
-void	print_event(t_philo philo, const char *message)
-{
-	sem_wait(philo.sem_print);
-	printf("%-5ld %-3d %s\n",
-		get_timestamp(philo.start_time), philo.id, message);
-	sem_post(philo.sem_print);
-}
-
-// returns 0 if the philo died, else 1
-void	philo_routine(t_philo philo)
-{
-	int	nb_eat;
-
-	nb_eat = 0;
-	while (true)
-	{
-		usleep(100);
-		if (nb_eat == philo.eat_to_end)
-		{
-			sem_post(philo.sem_eat_to_end);
-			nb_eat++;
-		}
-		if (get_time_diff(philo.start_time, philo.last_meal)
-			>= philo.times[t_die])
-		{
-			sem_wait(philo.sem_print);
-			sem_post(philo.sem_end);
-			printf("%-5ld %-3d %s\n",
-				get_timestamp(philo.start_time), philo.id, "is dead");
-			return ;
-		}
-		if (philo.state == thinking)
-		{
-			sem_wait(philo.sem_forks);
-			philo.nb_forks++;
-			print_event(philo, "has taken a fork");
-			if (philo.nb_forks == 2)
-			{
-				print_event(philo, "is eating");
-				philo.state = eating;
-				philo.begin_eat = get_timestamp(philo.start_time);
-			}
-		}
-		else if (philo.state == eating
-			&& get_time_diff(philo.start_time, philo.begin_eat)
-			>= philo.times[t_eat])
-		{
-			philo.last_meal = get_timestamp(philo.start_time);
-			philo.begin_sleep = get_timestamp(philo.start_time);
-			sem_post(philo.sem_forks);
-			sem_post(philo.sem_forks);
-			nb_eat++;
-			philo.state = sleeping;
-			philo.nb_forks = 0;
-			print_event(philo, "is sleeping");
-		}
-		else if (philo.state == sleeping
-			&& get_time_diff(philo.start_time, philo.begin_sleep)
-			>= philo.times[t_sleep])
-		{
-			philo.state = thinking;
-			print_event(philo, "is thinking");
-		}
-	}
-}
-
 // returns -1 for error, 0 for main and 1 for child
-int	create_philos_processes(int nb_philos, pid_t *pids, t_philo *philo)
+static int	create_philos_processes(int nb_philos, pid_t *pids, t_philo *philo)
 {
 	pid_t	pid;
 	int		i;
@@ -101,45 +35,7 @@ int	create_philos_processes(int nb_philos, pid_t *pids, t_philo *philo)
 	return (0);
 }
 
-void	close_semaphores(t_philo *philo)
-{
-	if (philo)
-	{
-		if (philo->sem_end)
-			sem_close(philo->sem_end);
-		if (philo->sem_forks)
-			sem_close(philo->sem_forks);
-		if (philo->sem_print)
-			sem_close(philo->sem_print);
-		if (philo->sem_eat_to_end)
-			sem_close(philo->sem_eat_to_end);
-	}
-	sem_unlink("philo_end");
-	sem_unlink("philo_forks");
-	sem_unlink("philo_print");
-	sem_unlink("philo_eat_to_end");
-}
-
-bool	open_semaphores(t_philo *philo)
-{
-	const char	*error = "Error opening semaphore";
-
-	philo->sem_forks = sem_open("philo_forks", O_CREAT, 0664, philo->nb_philos);
-	if (philo->sem_forks == SEM_FAILED)
-		return (close_semaphores(philo), printf("%s\n", error), false);
-	philo->sem_end = sem_open("philo_end", O_CREAT, 0664, 0);
-	if (philo->sem_end == SEM_FAILED)
-		return (close_semaphores(philo), printf("%s\n", error), false);
-	philo->sem_print = sem_open("philo_print", O_CREAT, 0664, 1);
-	if (philo->sem_print == SEM_FAILED)
-		return (close_semaphores(philo), printf("%s\n", error), false);
-	philo->sem_eat_to_end = sem_open("philo_eat_to_end", O_CREAT, 0664, 0);
-	if (philo->sem_eat_to_end == SEM_FAILED)
-		return (close_semaphores(philo), printf("%s\n", error), false);
-	return (true);
-}
-
-int	end_checker(t_philo philo, pid_t *pids)
+static int	end_checker(t_philo philo, pid_t *pids)
 {
 	int		i;
 	pid_t	pid;
@@ -157,27 +53,50 @@ int	end_checker(t_philo philo, pid_t *pids)
 			i++;
 		}
 		sem_post(philo.sem_end);
-		sem_close(philo.sem_end);
 		sem_close(philo.sem_forks);
 		sem_close(philo.sem_print);
 		sem_close(philo.sem_eat_to_end);
+		sem_close(philo.sem_end);
 		return (1);
 	}
+	pids[philo.nb_philos] = pid;
 	return (0);
 }
 
-void	kill_all_philos(t_philo philo, pid_t *pids)
+static void	kill_all_philos(t_philo philo, pid_t *pids)
 {
 	int	i;
 
 	i = 0;
 	close_semaphores(&philo);
-	while (i < philo.nb_philos)
+	while (i < philo.nb_philos + 1)
 	{
 		if (pids[i] != 0)
 			kill(pids[i], SIGKILL);
 		i++;
 	}
+}
+
+bool	exec_process(t_philo philo, int value, pid_t *pids, t_timeval time)
+{
+	if (value > 0)
+	{
+		free(pids);
+		philo.start_time = time;
+		philo.last_meal = get_timestamp(time);
+		if (philo.id % 2 == 0)
+			usleep(5000);
+		philo_routine(philo);
+	}
+	else
+	{
+		if (end_checker(philo, pids))
+			return (false);
+		sem_wait(philo.sem_end);
+		kill_all_philos(philo, pids);
+		free(pids);
+	}
+	return (true);
 }
 
 int	main(int argc, char **argv)
@@ -187,36 +106,14 @@ int	main(int argc, char **argv)
 	int			value;
 	t_timeval	time;
 
-	close_semaphores(NULL);
-	philo = (t_philo){0};
-	if (!parsing(argc, argv, &philo))
+	if (!init(argc, argv, &philo, &pids))
 		return (1);
-	pids = ft_calloc(philo.nb_philos, sizeof(pid_t));
-	if (!pids)
-		return (1);
-	if (!open_semaphores(&philo))
-		return (free(pids), 1);
 	gettimeofday(&time, NULL);
 	value = create_philos_processes(philo.nb_philos, pids, &philo);
 	if (value < 0)
 		return (kill_all_philos(philo, pids), free(pids), 0);
-	if (value > 0)
-	{
-		free(pids);
-		philo.start_time = time;
-		philo.last_meal = get_timestamp(time);
-		if (philo.id % 2 == 0)
-			usleep(50000);
-		philo_routine(philo);
-	}
-	else
-	{
-		if (end_checker(philo, pids))
-			return (0);
-		sem_wait(philo.sem_end);
-		kill_all_philos(philo, pids);
-		free(pids);
-	}
+	if (!exec_process(philo, value, pids, time))
+		return (0);
 	while (waitpid(-1, NULL, 0) > 0)
 		;
 	close_semaphores(&philo);

@@ -6,7 +6,7 @@
 #    By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/26 19:46:18 by qthierry          #+#    #+#              #
-#    Updated: 2023/06/03 17:46:45 by qthierry         ###   ########.fr        #
+#    Updated: 2023/06/03 19:35:23 by qthierry         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,6 +26,9 @@ SRC_LIST = \
 			memory.c \
 			ft_atoi.c \
 			time.c \
+			philo_routine.c \
+			sem_handle.c \
+			utils.c \
 			main.c
 
 SRC_DIR = ./src/
@@ -36,12 +39,6 @@ OBJ_LIST = $(patsubst %.c, %.o, $(SRC_LIST))
 OBJ = $(addprefix $(OBJ_DIR), $(OBJ_LIST))
 
 all:	$(NAME)
-
-run: $(NAME)
-	./$(NAME) 2 110 50 50
-
-vrun: $(NAME)
-	valgrind --leak-check=full --trace-children=yes --show-leak-kinds=all --track-origins=yes ./$(NAME) 20 1500 50 50 2
 
 $(NAME):	$(OBJ_DIR) $(OBJ)
 	$(CC) $(CFLAGS) $(OBJ) $(LIBS) $(INCLUDES) -o $(NAME)
