@@ -6,7 +6,7 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 00:43:55 by qthierry          #+#    #+#             */
-/*   Updated: 2023/05/26 22:30:45 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/06/03 17:49:15 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@
 # include <semaphore.h>
 # include <fcntl.h>
 # include <sys/stat.h>
+# include <signal.h>
+# include <sys/types.h>
 
 typedef struct timeval	t_timeval;
 
@@ -49,12 +51,6 @@ enum	e_timestamps
 	last_meal
 };
 
-typedef struct s_fork
-{
-	pthread_mutex_t	mut;
-	bool			is_taken;
-}	t_fork;
-
 typedef struct s_philo
 {
 	int				id;
@@ -68,6 +64,9 @@ typedef struct s_philo
 	long			last_meal;
 	long			times[3];
 	sem_t			*sem_forks;
+	sem_t			*sem_end;
+	sem_t			*sem_print;
+	sem_t			*sem_eat_to_end;
 }	t_philo;
 
 // ft_atoi.c

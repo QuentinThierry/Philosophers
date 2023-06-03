@@ -6,7 +6,7 @@
 #    By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/26 19:46:18 by qthierry          #+#    #+#              #
-#    Updated: 2023/05/26 22:26:04 by qthierry         ###   ########.fr        #
+#    Updated: 2023/06/03 17:46:45 by qthierry         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -38,10 +38,10 @@ OBJ = $(addprefix $(OBJ_DIR), $(OBJ_LIST))
 all:	$(NAME)
 
 run: $(NAME)
-	./$(NAME)
+	./$(NAME) 2 110 50 50
 
 vrun: $(NAME)
-	valgrind --leak-check=full --trace-children=yes --show-leak-kinds=all --track-origins=yes ./$(NAME)
+	valgrind --leak-check=full --trace-children=yes --show-leak-kinds=all --track-origins=yes ./$(NAME) 20 1500 50 50 2
 
 $(NAME):	$(OBJ_DIR) $(OBJ)
 	$(CC) $(CFLAGS) $(OBJ) $(LIBS) $(INCLUDES) -o $(NAME)
