@@ -6,7 +6,7 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/03 19:30:04 by qthierry          #+#    #+#             */
-/*   Updated: 2023/07/29 16:36:13 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/07/29 20:05:37 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,71 +15,73 @@
 static void	begin_eat(t_philo *philo)
 {
 	sem_wait(philo->sem_forks);
-	philo->nb_forks++;
 	print_event(*philo, "has taken a fork");
-	if (philo->nb_forks == 2)
-	{
-		philo->last_meal = get_timestamp(philo->start_time);
-		print_event(*philo, "is eating");
-		philo->state = eating;
-		philo->begin_eat = get_timestamp(philo->start_time);
-	}
+	sem_wait(philo->sem_forks);
+	print_event(*philo, "has taken a fork");
+	philo->state = eating;
+	sem_wait(philo->sem_last_meal);
+	philo->last_meal = get_timestamp(philo->start_time);
+	sem_post(philo->sem_last_meal);
+	print_event(*philo, "is eating");
+	usleep(philo->times[t_eat] * 1000);
+	sem_post(philo->sem_forks);
+	sem_post(philo->sem_forks);
+
 }
 
-static void	begin_sleep(t_philo *philo, int *nb_eat)
+static void	begin_sleep(t_philo *philo)
 {
-	philo->begin_sleep = get_timestamp(philo->start_time);
-	sem_post(philo->sem_forks);
-	sem_post(philo->sem_forks);
-	(*nb_eat)++;
+	sem_wait(philo->sem_eat_to_end);
+	philo->eat_to_end--;
+	sem_post(philo->sem_eat_to_end);
 	philo->state = sleeping;
-	philo->nb_forks = 0;
 	print_event(*philo, "is sleeping");
+	usleep(philo->times[t_sleep] * 1000);
 }
 
-static bool	check_for_end(t_philo *philo, int *nb_eat)
+void	*philo_thread_routine(void *philo_arg)
 {
-	if (*nb_eat == philo->eat_to_end)
-	{
-		sem_post(philo->sem_eat_to_end);
-		(*nb_eat)++;
-	}
-	if (get_time_diff(philo->start_time, philo->last_meal)
-		>= philo->times[t_die])
-	{
-		sem_wait(philo->sem_print);
-		sem_post(philo->sem_end);
-		printf("%-5ld %-3d %s\n",
-			get_timestamp(philo->start_time), philo->id, "is dead");
-		return (false);
-	}
-	return (true);
-}
+	t_philo	*philo;
 
-// returns 0 if the philo died, else 1
-void	philo_routine(t_philo philo)
-{
-	int	nb_eat;
-
-	nb_eat = 0;
-	// sem_wait(philo.sem_start_all);
+	philo = philo_arg;
 	while (true)
 	{
-		usleep(1000);
-		if (!check_for_end(&philo, &nb_eat))
-			return ;
-		if (philo.state == thinking)
-			begin_eat(&philo);
-		else if (philo.state == eating
-			&& get_time_diff(philo.start_time, philo.begin_eat)
-			>= philo.times[t_eat])
-			begin_sleep(&philo, &nb_eat);
-		else if (philo.state == sleeping
-			&& get_time_diff(philo.start_time, philo.begin_sleep)
-			>= philo.times[t_sleep])
+		usleep(500);
+		sem_wait(philo->sem_last_meal);
+		if (get_time_diff(philo->start_time, philo->last_meal)
+			>= philo->times[t_die])
 		{
-			philo.state = thinking;
-			print_event(philo, "is thinking");
+			sem_post(philo->sem_end);
+			sem_wait(philo->sem_print);
+			printf("%-5ld %-3d %s\n",
+				get_timestamp(philo->start_time), philo->id, "died");
+			return (NULL);
+		}
+		sem_post(philo->sem_last_meal);
+		sem_wait(philo->sem_eat_to_end);
+		if (philo->eat_to_end == 0)
+			sem_post(philo->sem_nb_eat_to_end);
+		sem_post(philo->sem_eat_to_end);
+	}
+	return (NULL);
+}
+
+void	philo_routine(t_philo *philo)
+{
+	if (philo->id % 2 == 0)
+		philo->state = eating;
+	while (true)
+	{
+		if (philo->state == thinking)
+			begin_eat(philo);
+		else if (philo->state == eating)
+			begin_sleep(philo);
+		else if (philo->state == sleeping)
+		{
+			philo->state = thinking;
+			print_event(*philo, "is thinking");
+			if (philo->nb_philos % 2 == 1)
+				usleep(1000);
 		}
 	}
 }
