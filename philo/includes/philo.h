@@ -6,7 +6,7 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 00:43:55 by qthierry          #+#    #+#             */
-/*   Updated: 2023/05/26 19:48:02 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/07/29 14:23:41 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,5 +114,8 @@ void			*philo_routine(void *arg);
 // time.c
 long			get_timestamp(t_timeval start_time);
 long			get_time_diff(t_timeval start_time, long t_before);
+
+// end_checker.c
+void			end_checker(t_philo *philos);
 
 #endif

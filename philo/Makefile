@@ -6,14 +6,14 @@
 #    By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/22 00:29:38 by qthierry          #+#    #+#              #
-#    Updated: 2023/05/26 19:49:45 by qthierry         ###   ########.fr        #
+#    Updated: 2023/07/29 15:48:35 by qthierry         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = philo
 
 CC = gcc
-CFLAGS = -g -Wall -Wextra #-fsanitize=thread# -Werror
+CFLAGS = -Wall -Wextra#-fsanitize=thread# -Werror
 LIBS = -pthread
 INCLUDES = -I$(HEADERS_DIR)
 
@@ -33,6 +33,7 @@ SRC_LIST = \
 			philo_utils.c \
 			print_event.c \
 			philo_routine.c \
+			end_checker.c \
 			time.c
 
 SRC_DIR = ./src/
@@ -43,12 +44,6 @@ OBJ_LIST = $(patsubst %.c, %.o, $(SRC_LIST))
 OBJ = $(addprefix $(OBJ_DIR), $(OBJ_LIST))
 
 all:	$(NAME)
-
-run: $(NAME)
-	./$(NAME)
-
-vrun: $(NAME)
-	valgrind --leak-check=full --trace-children=yes --show-leak-kinds=all --track-origins=yes ./$(NAME)
 
 $(NAME):	$(OBJ_DIR) $(OBJ)
 	$(CC) $(CFLAGS) $(OBJ) $(LIBS) $(INCLUDES) -o $(NAME)

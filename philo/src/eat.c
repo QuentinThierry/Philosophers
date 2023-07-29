@@ -6,7 +6,7 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/24 18:22:48 by qthierry          #+#    #+#             */
-/*   Updated: 2023/05/26 19:33:34 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/07/29 13:20:22 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,9 @@ void	try_to_eat(t_philo *philo)
 	{
 		philo->state = eating;
 		philo->begin_eat = get_timestamp(*philo->start_time);
+		pthread_mutex_lock(philo->mut_last_meal);
+		philo->last_meal = get_timestamp(*philo->start_time);
+		pthread_mutex_unlock(philo->mut_last_meal);
 		print_event(philo, "is eating");
 	}
 }

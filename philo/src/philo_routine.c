@@ -6,7 +6,7 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/26 19:34:35 by qthierry          #+#    #+#             */
-/*   Updated: 2023/05/28 22:38:00 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/07/29 15:52:02 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,6 @@
 
 static inline bool	begin_sleep(t_philo *philo)
 {
-	pthread_mutex_lock(philo->mut_last_meal);
-	philo->last_meal = get_timestamp(*philo->start_time);
-	pthread_mutex_unlock(philo->mut_last_meal);
 	pthread_mutex_lock(philo->mut_eat_end);
 	if (philo->eat_to_end > -1)
 		philo->eat_to_end--;
@@ -64,14 +61,14 @@ void	*philo_routine(void *arg)
 
 	philo = arg;
 	if (philo->id % 2 == 0)
-		usleep(5000);
+		usleep(500);
 	while (true)
 	{
-		usleep(100);
 		if (get_is_dead(philo))
 			return (NULL);
 		if (!philo_routine2(philo))
 			return (NULL);
+		usleep(1000);
 	}
 	return (NULL);
 }
