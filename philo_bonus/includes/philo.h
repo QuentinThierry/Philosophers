@@ -6,7 +6,7 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 00:43:55 by qthierry          #+#    #+#             */
-/*   Updated: 2023/06/03 19:34:42 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/07/29 16:32:18 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,7 @@ typedef struct s_philo
 	sem_t			*sem_end;
 	sem_t			*sem_print;
 	sem_t			*sem_eat_to_end;
+	sem_t			*sem_start_all;
 }	t_philo;
 
 // ft_atoi.c
