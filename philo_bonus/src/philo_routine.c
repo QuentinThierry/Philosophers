@@ -6,7 +6,7 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/03 19:30:04 by qthierry          #+#    #+#             */
-/*   Updated: 2023/07/29 20:05:37 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/07/30 16:12:25 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 
 static void	begin_eat(t_philo *philo)
 {
+	long	eat_time;
+
 	sem_wait(philo->sem_forks);
 	print_event(*philo, "has taken a fork");
 	sem_wait(philo->sem_forks);
@@ -22,21 +24,24 @@ static void	begin_eat(t_philo *philo)
 	sem_wait(philo->sem_last_meal);
 	philo->last_meal = get_timestamp(philo->start_time);
 	sem_post(philo->sem_last_meal);
-	print_event(*philo, "is eating");
-	usleep(philo->times[t_eat] * 1000);
+	eat_time = print_event(*philo, "is eating");
+	eat_time = philo->times[t_eat] - eat_time;
+	my_usleep(philo, eat_time, get_timestamp(philo->start_time));
 	sem_post(philo->sem_forks);
 	sem_post(philo->sem_forks);
-
 }
 
 static void	begin_sleep(t_philo *philo)
 {
-	sem_wait(philo->sem_eat_to_end);
-	philo->eat_to_end--;
-	sem_post(philo->sem_eat_to_end);
+	// sem_wait(philo->sem_eat_to_end);
+	// philo->eat_to_end--;
+	// sem_post(philo->sem_eat_to_end);
+	long	sleep_time;
+
 	philo->state = sleeping;
-	print_event(*philo, "is sleeping");
-	usleep(philo->times[t_sleep] * 1000);
+	sleep_time = print_event(*philo, "is sleeping");
+	sleep_time = philo->times[t_sleep] - sleep_time;
+	my_usleep(philo, sleep_time, get_timestamp(philo->start_time));
 }
 
 void	*philo_thread_routine(void *philo_arg)
@@ -58,10 +63,10 @@ void	*philo_thread_routine(void *philo_arg)
 			return (NULL);
 		}
 		sem_post(philo->sem_last_meal);
-		sem_wait(philo->sem_eat_to_end);
-		if (philo->eat_to_end == 0)
-			sem_post(philo->sem_nb_eat_to_end);
-		sem_post(philo->sem_eat_to_end);
+		// sem_wait(philo->sem_eat_to_end);
+		// if (philo->eat_to_end == 0)
+		// 	sem_post(philo->sem_nb_eat_to_end);
+		// sem_post(philo->sem_eat_to_end);
 	}
 	return (NULL);
 }
@@ -80,8 +85,6 @@ void	philo_routine(t_philo *philo)
 		{
 			philo->state = thinking;
 			print_event(*philo, "is thinking");
-			if (philo->nb_philos % 2 == 1)
-				usleep(1000);
 		}
 	}
 }

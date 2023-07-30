@@ -6,11 +6,23 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/24 18:21:31 by qthierry          #+#    #+#             */
-/*   Updated: 2023/05/26 21:31:33 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/07/30 15:16:12 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo.h"
+
+void	my_usleep(t_philo *philo, long delay, long start_time)
+{
+	long	time;
+
+	time = get_timestamp(philo->start_time);
+	while (time - start_time < delay)
+	{
+		usleep(50);
+		time = get_timestamp(philo->start_time);
+	}
+}
 
 long	get_timestamp(t_timeval start_time)
 {

@@ -6,7 +6,7 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 00:43:55 by qthierry          #+#    #+#             */
-/*   Updated: 2023/07/29 19:02:49 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/07/30 16:12:16 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,8 @@ typedef struct s_philo
 	enum e_state	state;
 	t_timeval		start_time;
 	long			last_meal;
+	long			last_begin_eat;
+	long			last_begin_sleep;
 	long			times[3];
 	pthread_t		thread;
 	sem_t			*sem_forks;
@@ -72,7 +74,8 @@ void			*ft_calloc(size_t nmemb, size_t size);
 // parsing.c
 bool			parsing(int argc, char **argv, t_philo *philo);
 
-// time.c
+// time.c50
+void			my_usleep(t_philo *philo, long delay, long start_time);
 long			get_timestamp(t_timeval start_time);
 long			get_time_diff(t_timeval start_time, long t_before);
 
@@ -81,7 +84,7 @@ void			close_semaphores(t_philo *philo);
 bool			open_semaphores(t_philo *philo);
 
 // utils.c
-void			print_event(t_philo philo, const char *message);
+long			print_event(t_philo philo, const char *message);
 bool			init(int argc, char **argv, t_philo *philo, pid_t **pids);
 
 //philo_routine.c

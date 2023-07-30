@@ -6,7 +6,7 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/26 19:47:09 by qthierry          #+#    #+#             */
-/*   Updated: 2023/07/29 20:06:38 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/07/30 15:04:27 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,6 @@ int	main(int argc, char **argv)
 
 	if (!init(argc, argv, &philo, &pids))
 		return (1);
-	printf("%d\n", philo.nb_philos);
 	gettimeofday(&time, NULL);
 	value = create_philos_processes(philo.nb_philos, pids, &philo);
 	if (value < 0)
