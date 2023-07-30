@@ -6,7 +6,7 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/03 19:30:04 by qthierry          #+#    #+#             */
-/*   Updated: 2023/07/30 16:12:25 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/07/30 17:08:26 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,19 +14,24 @@
 
 static void	begin_eat(t_philo *philo)
 {
+	long	cur_time;
 	long	eat_time;
 
 	sem_wait(philo->sem_forks);
-	print_event(*philo, "has taken a fork");
+	print_event(*philo, "has taken a fork", get_timestamp(philo->start_time));
 	sem_wait(philo->sem_forks);
-	print_event(*philo, "has taken a fork");
+	print_event(*philo, "has taken a fork", get_timestamp(philo->start_time));
+
 	philo->state = eating;
+	cur_time = get_timestamp(philo->start_time);
+	print_event(*philo, "is eating", cur_time);
 	sem_wait(philo->sem_last_meal);
-	philo->last_meal = get_timestamp(philo->start_time);
+	philo->last_meal = cur_time;
 	sem_post(philo->sem_last_meal);
-	eat_time = print_event(*philo, "is eating");
-	eat_time = philo->times[t_eat] - eat_time;
-	my_usleep(philo, eat_time, get_timestamp(philo->start_time));
+	philo->last_begin_eat = cur_time;
+	// eat_time = get_timestamp(philo->start_time) - cur_time;
+	eat_time = cur_time;
+	my_usleep(philo, philo->times[t_eat], cur_time);
 	sem_post(philo->sem_forks);
 	sem_post(philo->sem_forks);
 }
@@ -36,12 +41,15 @@ static void	begin_sleep(t_philo *philo)
 	// sem_wait(philo->sem_eat_to_end);
 	// philo->eat_to_end--;
 	// sem_post(philo->sem_eat_to_end);
+	long	cur_time;
 	long	sleep_time;
 
 	philo->state = sleeping;
-	sleep_time = print_event(*philo, "is sleeping");
-	sleep_time = philo->times[t_sleep] - sleep_time;
-	my_usleep(philo, sleep_time, get_timestamp(philo->start_time));
+	cur_time = get_timestamp(philo->start_time);
+	print_event(*philo, "is sleeping", cur_time);
+	// sleep_time = philo->times[t_sleep] -
+		// ((cur_time - philo->last_begin_eat) - philo->times[t_sleep]);
+	my_usleep(philo, philo->times[t_sleep], cur_time);
 }
 
 void	*philo_thread_routine(void *philo_arg)
@@ -74,7 +82,10 @@ void	*philo_thread_routine(void *philo_arg)
 void	philo_routine(t_philo *philo)
 {
 	if (philo->id % 2 == 0)
+	{
 		philo->state = eating;
+		philo->last_begin_eat = -(philo->times[t_eat] - get_timestamp(philo->start_time));
+	}
 	while (true)
 	{
 		if (philo->state == thinking)
@@ -84,7 +95,7 @@ void	philo_routine(t_philo *philo)
 		else if (philo->state == sleeping)
 		{
 			philo->state = thinking;
-			print_event(*philo, "is thinking");
+			print_event(*philo, "is thinking", get_timestamp(philo->start_time));
 		}
 	}
 }

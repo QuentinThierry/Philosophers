@@ -6,7 +6,7 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/26 19:47:09 by qthierry          #+#    #+#             */
-/*   Updated: 2023/07/30 15:04:27 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/07/30 17:41:45 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,17 +49,37 @@ static void	kill_all_philos(t_philo philo, pid_t *pids)
 	}
 }
 
-static bool	create_semaphore_mutex(t_philo *philo)
+static bool	create_semaphore_threads(t_philo *philo)
 {
 	const char	*error = "Error opening semaphore";
-
-	philo->sem_eat_to_end = sem_open("/philo_eat_to_end", O_CREAT, 0664, 1);
-	if (philo->sem_eat_to_end == SEM_FAILED)
+	char		*name;
+	
+	name = ft_strjoin("/philo_last_meal_", ft_itoa(philo->id));
+	if (!name)
 		return (close_semaphores(philo), printf("%s\n", error), false);
-	philo->sem_last_meal = sem_open("/philo_last_meal", O_CREAT, 0664, 1);
+	philo->sem_last_meal = sem_open(name, O_CREAT, 0664, 1);
+	free(name);
 	if (philo->sem_last_meal == SEM_FAILED)
 		return (close_semaphores(philo), printf("%s\n", error), false);
 	return (true);
+}
+
+void	destroy_semaphore_threads(t_philo *philo)
+{
+	const char	*error = "Error closing semaphore";
+	char		*name;
+	int			i;
+	
+	i = 1;
+	while (i <= philo->nb_philos)
+	{
+		name = ft_strjoin("philo_last_meal_", ft_itoa(i));
+		if (!name)
+			return (close_semaphores(philo), (void)printf("%s\n", error));
+		sem_unlink(name);
+		free(name);
+		i++;
+	}
 }
 
 static bool	create_thread(t_philo *philo)
@@ -77,7 +97,7 @@ bool	exec_process(t_philo *philo, int value, pid_t *pids, t_timeval time)
 		free(pids);
 		philo->start_time = time;
 		philo->last_meal = get_timestamp(time);
-		if (!create_semaphore_mutex(philo))
+		if (!create_semaphore_threads(philo))
 			return (false);
 		create_thread(philo);
 		philo_routine(philo);

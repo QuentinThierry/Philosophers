@@ -6,7 +6,7 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 00:43:55 by qthierry          #+#    #+#             */
-/*   Updated: 2023/07/30 16:12:16 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/07/30 17:31:05 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,8 @@ typedef struct s_philo
 
 // ft_atoi.c
 int				ft_atoi(const char *nptr, bool *has_error);
+char			*ft_itoa(int n);
+char			*ft_strjoin(char const *s1, char const *s2);
 
 // memory.c
 void			free_philos(t_philo *philos);
@@ -84,11 +86,13 @@ void			close_semaphores(t_philo *philo);
 bool			open_semaphores(t_philo *philo);
 
 // utils.c
-long			print_event(t_philo philo, const char *message);
+void			print_event(t_philo philo, const char *message, long time);
 bool			init(int argc, char **argv, t_philo *philo, pid_t **pids);
 
 //philo_routine.c
 void			philo_routine(t_philo *philo);
 void			*philo_thread_routine(void *philo);
+
+void			destroy_semaphore_threads(t_philo *philo);
 
 #endif
