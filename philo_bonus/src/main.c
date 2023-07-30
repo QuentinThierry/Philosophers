@@ -6,7 +6,7 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/26 19:47:09 by qthierry          #+#    #+#             */
-/*   Updated: 2023/07/30 17:41:45 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/07/30 18:26:38 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ bool	exec_process(t_philo *philo, int value, pid_t *pids, t_timeval time)
 	if (value > 0)
 	{
 		free(pids);
-		philo->start_time = time;
+		philo->origin_time = time;
 		philo->last_meal = get_timestamp(time);
 		if (!create_semaphore_threads(philo))
 			return (false);
