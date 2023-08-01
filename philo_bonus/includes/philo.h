@@ -6,7 +6,7 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 00:43:55 by qthierry          #+#    #+#             */
-/*   Updated: 2023/07/30 18:26:27 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/08/01 16:31:59 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,8 +52,6 @@ typedef struct s_philo
 	enum e_state	state;
 	t_timeval		origin_time;
 	long			last_meal;
-	long			last_begin_eat;
-	long			last_begin_sleep;
 	long			times[3];
 	pthread_t		thread;
 	sem_t			*sem_forks;
@@ -61,7 +59,6 @@ typedef struct s_philo
 	sem_t			*sem_print;
 	sem_t			*sem_nb_eat_to_end;
 	sem_t			*sem_last_meal;
-	sem_t			*sem_eat_to_end;
 }	t_philo;
 
 // ft_atoi.c
@@ -76,7 +73,7 @@ void			*ft_calloc(size_t nmemb, size_t size);
 // parsing.c
 bool			parsing(int argc, char **argv, t_philo *philo);
 
-// time.c50
+// time.c
 void			my_usleep(t_philo *philo, long delay, long start_time);
 long			get_timestamp(t_timeval start_time);
 long			get_time_diff(t_timeval start_time, long t_before);
@@ -84,15 +81,16 @@ long			get_time_diff(t_timeval start_time, long t_before);
 // sem_handle.c
 void			close_semaphores(t_philo *philo);
 bool			open_semaphores(t_philo *philo);
+bool			create_semaphore_threads(t_philo *philo);
+void			destroy_semaphore_threads(t_philo *philo);
 
 // utils.c
 void			print_event(t_philo philo, const char *message, long time);
 bool			init(int argc, char **argv, t_philo *philo, pid_t **pids);
+void			kill_all_philos(t_philo philo, pid_t *pids);
 
 //philo_routine.c
 void			philo_routine(t_philo *philo);
 void			*philo_thread_routine(void *philo);
-
-void			destroy_semaphore_threads(t_philo *philo);
 
 #endif

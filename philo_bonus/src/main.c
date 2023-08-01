@@ -6,7 +6,7 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/26 19:47:09 by qthierry          #+#    #+#             */
-/*   Updated: 2023/07/30 18:26:38 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/08/01 16:31:43 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,59 +35,25 @@ static int	create_philos_processes(int nb_philos, pid_t *pids, t_philo *philo)
 	return (0);
 }
 
-static void	kill_all_philos(t_philo philo, pid_t *pids)
-{
-	int	i;
-
-	i = 0;
-	close_semaphores(&philo);
-	while (i < philo.nb_philos + 1)
-	{
-		if (pids[i] != 0)
-			kill(pids[i], SIGKILL);
-		i++;
-	}
-}
-
-static bool	create_semaphore_threads(t_philo *philo)
-{
-	const char	*error = "Error opening semaphore";
-	char		*name;
-	
-	name = ft_strjoin("/philo_last_meal_", ft_itoa(philo->id));
-	if (!name)
-		return (close_semaphores(philo), printf("%s\n", error), false);
-	philo->sem_last_meal = sem_open(name, O_CREAT, 0664, 1);
-	free(name);
-	if (philo->sem_last_meal == SEM_FAILED)
-		return (close_semaphores(philo), printf("%s\n", error), false);
-	return (true);
-}
-
-void	destroy_semaphore_threads(t_philo *philo)
-{
-	const char	*error = "Error closing semaphore";
-	char		*name;
-	int			i;
-	
-	i = 1;
-	while (i <= philo->nb_philos)
-	{
-		name = ft_strjoin("philo_last_meal_", ft_itoa(i));
-		if (!name)
-			return (close_semaphores(philo), (void)printf("%s\n", error));
-		sem_unlink(name);
-		free(name);
-		i++;
-	}
-}
-
 static bool	create_thread(t_philo *philo)
 {
 	if (pthread_create(&philo->thread, NULL, philo_thread_routine, philo) != 0)
 		return (printf("Error on creating thread\n"), false);
 	pthread_detach(philo->thread);
 	return (true);
+}
+
+void	wait_eat_to_end(t_philo *philo)
+{
+	int	i;
+
+	i = 0;
+	while (i < philo->nb_philos)
+	{
+		sem_wait(philo->sem_nb_eat_to_end);
+		i++;
+	}
+	sem_post(philo->sem_end);
 }
 
 bool	exec_process(t_philo *philo, int value, pid_t *pids, t_timeval time)
@@ -99,11 +65,19 @@ bool	exec_process(t_philo *philo, int value, pid_t *pids, t_timeval time)
 		philo->last_meal = get_timestamp(time);
 		if (!create_semaphore_threads(philo))
 			return (false);
-		create_thread(philo);
-		philo_routine(philo);
+		(create_thread(philo), philo_routine(philo));
 	}
 	else
 	{
+		if (philo->eat_to_end > -2)
+		{
+			value = fork();
+			if (value == -1)
+				return (free(pids), false);
+			if (value == 0)
+				return (free(pids), wait_eat_to_end(philo), false);
+		}
+		printf("eat : %d\n", philo->eat_to_end);
 		sem_wait(philo->sem_end);
 		kill_all_philos(*philo, pids);
 		free(pids);
