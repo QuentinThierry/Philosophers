@@ -6,7 +6,7 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/26 19:47:09 by qthierry          #+#    #+#             */
-/*   Updated: 2023/08/01 16:31:43 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/08/01 19:05:35 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,6 @@ bool	exec_process(t_philo *philo, int value, pid_t *pids, t_timeval time)
 			if (value == 0)
 				return (free(pids), wait_eat_to_end(philo), false);
 		}
-		printf("eat : %d\n", philo->eat_to_end);
 		sem_wait(philo->sem_end);
 		kill_all_philos(*philo, pids);
 		free(pids);
