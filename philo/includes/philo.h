@@ -6,7 +6,7 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 00:43:55 by qthierry          #+#    #+#             */
-/*   Updated: 2023/08/01 19:30:30 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/08/01 20:34:29 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,6 @@ void			*philo_routine(void *arg);
 // time.c
 void			my_usleep(t_philo *philo, long delay, long start_time);
 long			get_timestamp(t_timeval start_time);
-long			get_time_diff(t_timeval start_time, long t_before);
 
 // end_checker.c
 void			end_checker(t_philo *philos);

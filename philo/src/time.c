@@ -6,7 +6,7 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/24 18:21:31 by qthierry          #+#    #+#             */
-/*   Updated: 2023/08/01 18:30:32 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/08/01 20:15:33 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,13 @@ void	my_usleep(t_philo *philo, long delay, long start_time)
 	while (time - start_time < delay)
 	{
 		usleep(50);
+		pthread_mutex_lock(philo->mut_end);
+		if (*philo->is_end)
+		{
+			pthread_mutex_unlock(philo->mut_end);
+			return ;
+		}
+		pthread_mutex_unlock(philo->mut_end);
 		time = get_timestamp(*philo->origin_time);
 	}
 }

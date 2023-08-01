@@ -6,7 +6,7 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/29 14:21:17 by qthierry          #+#    #+#             */
-/*   Updated: 2023/08/01 19:35:54 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/08/01 20:44:58 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,8 @@ static bool	end_with_nb_meat(t_philo *philos)
 {
 	size_t	i;
 
+	pthread_mutex_lock(philos->mut_eat_end);
 	i = 0;
-
 	if (philos[i].nb_eat_max == -2)
 	{
 		pthread_mutex_unlock(philos->mut_eat_end);

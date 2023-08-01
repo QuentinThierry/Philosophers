@@ -6,7 +6,7 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/24 18:26:33 by qthierry          #+#    #+#             */
-/*   Updated: 2023/08/01 18:31:13 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/08/01 20:34:49 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ bool	print_event(t_philo *philo, const char *message, long time)
 	if (*philo->is_end)
 		return (pthread_mutex_unlock(philo->mut_end), true);
 	pthread_mutex_lock(philo->mut_print);
-	printf("%-ld %-ld %s\n", get_timestamp(*philo->origin_time),
+	printf("%-ld %-ld %s\n", time,
 		philo->id, message);
 	pthread_mutex_unlock(philo->mut_print);
 	pthread_mutex_unlock(philo->mut_end);

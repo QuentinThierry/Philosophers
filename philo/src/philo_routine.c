@@ -6,7 +6,7 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/26 19:34:35 by qthierry          #+#    #+#             */
-/*   Updated: 2023/08/01 18:47:18 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/08/01 20:31:29 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,6 @@ static inline bool	begin_sleep(t_philo *philo)
 {
 	long	cur_time;
 
-	// pthread_mutex_lock(philo->mut_eat_end);
-	// if (philo->eat_to_end > -1)
-	// 	philo->eat_to_end--;
-	// pthread_mutex_unlock(philo->mut_eat_end);
 	cur_time = get_timestamp(*philo->origin_time);
 	philo->state = sleeping;
 	print_event(philo, "is sleeping", cur_time);
@@ -57,14 +53,14 @@ void	*philo_routine(void *arg)
 
 	philo = arg;
 	if (philo->id % 2 == 0)
-		usleep(500);
+		philo->state = eating;
 	while (true)
 	{
 		if (get_is_dead(philo))
 			return (NULL);
 		if (!philo_routine2(philo))
 			return (NULL);
-		usleep(1000);
+		usleep(500);
 	}
 	return (NULL);
 }
