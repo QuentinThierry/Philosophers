@@ -6,7 +6,7 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 00:43:55 by qthierry          #+#    #+#             */
-/*   Updated: 2023/07/29 14:23:41 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/08/01 19:30:30 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,13 +38,6 @@ enum	e_times
 	t_sleep
 };
 
-enum	e_timestamps
-{
-	delay,
-	timestamp,
-	last_meal
-};
-
 typedef struct s_fork
 {
 	pthread_mutex_t	mut;
@@ -58,29 +51,21 @@ typedef struct s_philo
 	size_t			id;
 	long			times[3];
 	enum e_state	state;
-	bool			has_l_fork;
-	bool			has_r_fork;
-	bool			*can_begin;
 	bool			*is_end;
 	pthread_mutex_t	*mut_end;
 	pthread_mutex_t	*mut_print;
 	pthread_mutex_t	*mut_eat_end;
 	pthread_mutex_t	*mut_last_meal;
-	t_timeval		*start_time;
+	t_timeval		*origin_time;
 	t_fork			*forks;
 	long			last_meal;
-	long			begin_eat;
-	long			begin_sleep;
-	long			eat_to_end;
+	int				nb_eat;
+	int				nb_eat_max;
 }	t_philo;
 
 // eat.c
-void			try_to_eat(t_philo *philo);
+void			eat(t_philo *philo);
 bool			has_all_eaten(t_philo *philo);
-
-// forks.c
-bool			try_take_forks(t_philo *philo);
-bool			release_forks(t_philo *philo);
 
 // ft_atoi.c
 int				ft_atoi(const char *nptr, bool *has_error);
@@ -106,12 +91,13 @@ size_t			get_left_fork_id(t_philo *philo);
 size_t			get_right_fork_id(t_philo *philo);
 
 // print_event.c
-bool			print_event(t_philo *philo, const char *message);
+bool			print_event(t_philo *philo, const char *message, long time);
 
 // philo_routine.c
 void			*philo_routine(void *arg);
 
 // time.c
+void			my_usleep(t_philo *philo, long delay, long start_time);
 long			get_timestamp(t_timeval start_time);
 long			get_time_diff(t_timeval start_time, long t_before);
 

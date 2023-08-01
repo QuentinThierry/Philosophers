@@ -6,7 +6,7 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/24 18:22:17 by qthierry          #+#    #+#             */
-/*   Updated: 2023/07/29 14:46:29 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/08/01 19:12:41 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,13 +22,6 @@ bool	get_is_dead(t_philo *philo)
 	}
 	pthread_mutex_unlock(philo->mut_end);
 	return (false);
-}
-
-enum e_state	get_next_state(enum e_state state)
-{
-	if (state == thinking)
-		return (eating);
-	return (state + 1);
 }
 
 size_t	get_left_fork_id(t_philo *philo)

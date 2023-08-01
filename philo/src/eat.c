@@ -6,36 +6,37 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/24 18:22:48 by qthierry          #+#    #+#             */
-/*   Updated: 2023/07/29 13:20:22 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/08/01 19:22:24 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo.h"
 
-void	try_to_eat(t_philo *philo)
+void	eat(t_philo *philo)
 {
-	try_take_forks(philo);
-	if (philo->has_l_fork && philo->has_r_fork)
-	{
-		philo->state = eating;
-		philo->begin_eat = get_timestamp(*philo->start_time);
-		pthread_mutex_lock(philo->mut_last_meal);
-		philo->last_meal = get_timestamp(*philo->start_time);
-		pthread_mutex_unlock(philo->mut_last_meal);
-		print_event(philo, "is eating");
-	}
-}
+	size_t	id_l;
+	size_t	id_r;
+	size_t	tmp;
+	long	cur_time;
 
-bool	has_all_eaten(t_philo *philos)
-{
-	size_t	i;
-
-	i = 0;
-	while (i < philos->nb_philos)
-	{
-		if (philos[i].eat_to_end > 0)
-			return (false);
-		i++;
-	}
-	return (true);
+	id_r = get_right_fork_id(philo);
+	id_l = get_left_fork_id(philo);
+	if (philo->id == philo->nb_philos)
+		tmp = id_r,
+		id_r = id_l,
+		id_l = tmp;
+	pthread_mutex_lock(&philo->forks[id_r].mut);
+	print_event(philo, "has taken a fork", get_timestamp(*philo->origin_time));
+	pthread_mutex_lock(&philo->forks[id_l].mut);
+	print_event(philo, "has taken a fork", get_timestamp(*philo->origin_time));
+	pthread_mutex_lock(philo->mut_last_meal);
+	cur_time = get_timestamp(*philo->origin_time);
+	philo->last_meal = cur_time;
+	pthread_mutex_unlock(philo->mut_last_meal);
+	philo->state = eating;
+	print_event(philo, "is eating", cur_time);
+	my_usleep(philo, philo->times[t_eat], cur_time);
+	pthread_mutex_unlock(&philo->forks[id_l].mut);
+	pthread_mutex_unlock(&philo->forks[id_r].mut);
+	philo->nb_eat++;
 }

@@ -6,7 +6,7 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 00:38:45 by qthierry          #+#    #+#             */
-/*   Updated: 2023/07/29 15:50:56 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/08/01 18:36:54 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ static void	start_philos(t_philo *philos, t_timeval *start_time)
 	gettimeofday(start_time, NULL);
 	while (i < philos->nb_philos)
 	{
-		philos[i].start_time = start_time;
+		philos[i].origin_time = start_time;
 		philos[i].last_meal = get_timestamp(*start_time);
 		i++;
 	}
@@ -56,8 +56,10 @@ int	main(int argc, char **argv)
 	end_checker(philos);
 	i = 0;
 	while (i < philos->nb_philos)
+	{
 		if (pthread_join(philos[i++].thread, NULL))
 			printf("Error on join thread number %ld\n", i);
+	}
 	free_philos(philos);
 	return (0);
 }

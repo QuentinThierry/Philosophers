@@ -6,14 +6,14 @@
 #    By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/22 00:29:38 by qthierry          #+#    #+#              #
-#    Updated: 2023/07/29 15:48:35 by qthierry         ###   ########.fr        #
+#    Updated: 2023/08/01 18:48:28 by qthierry         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = philo
 
 CC = gcc
-CFLAGS = -Wall -Wextra#-fsanitize=thread# -Werror
+CFLAGS = -g -Wall -Wextra#-fsanitize=thread# -Werror
 LIBS = -pthread
 INCLUDES = -I$(HEADERS_DIR)
 
@@ -23,7 +23,6 @@ HEADERS = $(addprefix $(HEADERS_DIR), $(HEADERS_LIST))
 
 SRC_LIST = \
 			eat.c \
-			forks.c \
 			ft_atoi.c \
 			init.c \
 			main.c \

@@ -6,7 +6,7 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/24 18:24:11 by qthierry          #+#    #+#             */
-/*   Updated: 2023/05/26 17:17:24 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/08/01 19:27:04 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ static void	fill_philos_value(int arg_pos, t_philo *philos, int val)
 	else if (arg_pos == 5)
 	{
 		while (j < philos->nb_philos)
-			philos[j++].eat_to_end = val;
+			philos[j++].nb_eat_max = val;
 	}
 }
 
