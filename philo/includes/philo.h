@@ -6,7 +6,7 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 00:43:55 by qthierry          #+#    #+#             */
-/*   Updated: 2023/08/01 20:34:29 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/08/11 19:29:55 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,10 +52,12 @@ typedef struct s_philo
 	long			times[3];
 	enum e_state	state;
 	bool			*is_end;
+	bool			*is_start;
 	pthread_mutex_t	*mut_end;
 	pthread_mutex_t	*mut_print;
 	pthread_mutex_t	*mut_eat_end;
 	pthread_mutex_t	*mut_last_meal;
+	pthread_mutex_t	*mut_begin_sim;
 	t_timeval		*origin_time;
 	t_fork			*forks;
 	long			last_meal;
@@ -77,6 +79,7 @@ bool			fill_philo_2(t_philo *philos);
 // memory.c
 void			free_philos(t_philo *philos);
 void			*ft_calloc(size_t nmemb, size_t size);
+void			free_mutexs(t_philo *philos);
 
 // on_death.c
 void			broadcast_death(t_philo	*philo, bool has_print);
@@ -86,7 +89,6 @@ bool			parsing(int argc, char **argv, t_philo **philos);
 
 // philo_utils.c
 bool			get_is_dead(t_philo *philo);
-enum e_state	get_next_state(enum e_state state);
 size_t			get_left_fork_id(t_philo *philo);
 size_t			get_right_fork_id(t_philo *philo);
 
@@ -94,7 +96,7 @@ size_t			get_right_fork_id(t_philo *philo);
 bool			print_event(t_philo *philo, const char *message, long time);
 
 // philo_routine.c
-void			*philo_routine(void *arg);
+void			*philo_routine(t_philo *arg);
 
 // time.c
 void			my_usleep(t_philo *philo, long delay, long start_time);

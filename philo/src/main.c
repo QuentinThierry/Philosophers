@@ -6,7 +6,7 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 00:38:45 by qthierry          #+#    #+#             */
-/*   Updated: 2023/08/01 18:36:54 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/08/11 19:23:10 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,18 +26,18 @@ static void	start_philos(t_philo *philos, t_timeval *start_time)
 	}
 }
 
-bool	create_threads(t_philo *philos)
+void	create_threads(t_philo *philos)
 {
 	size_t	i;
 
 	i = 0;
 	while (i < philos->nb_philos)
 	{
-		if (pthread_create(&philos[i].thread, NULL, philo_routine, &philos[i]))
-			return (printf("Error on creating thread\n"), 1);
+		if (pthread_create(&philos[i].thread, NULL, (void *)philo_routine,
+				&philos[i]))
+			return ((void)printf("Error on creating thread\n"));
 		i++;
 	}
-	return (true);
 }
 
 int	main(int argc, char **argv)
@@ -51,8 +51,10 @@ int	main(int argc, char **argv)
 	if (!(fill_philo_1(philos) && fill_philo_2(philos)))
 		return (free(philos), printf("Memory exhausted\n"), 1);
 	start_philos(philos, &start_time);
-	if (!create_threads(philos))
-		return (free_philos(philos), 1);
+	create_threads(philos);
+	pthread_mutex_lock(philos->mut_begin_sim);
+	*philos->is_start = true;
+	pthread_mutex_unlock(philos->mut_begin_sim);
 	end_checker(philos);
 	i = 0;
 	while (i < philos->nb_philos)
