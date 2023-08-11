@@ -6,7 +6,7 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/03 19:30:04 by qthierry          #+#    #+#             */
-/*   Updated: 2023/08/01 16:30:24 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/08/11 20:15:07 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,8 +67,27 @@ void	*philo_thread_routine(void *philo_arg)
 	return (NULL);
 }
 
+static inline bool	begin_think(t_philo *philo)
+{
+	int		think_time;
+	long	cur_time;
+
+	cur_time = get_timestamp(philo->origin_time);
+	print_event(*philo, "is thinking", cur_time);
+	philo->state = thinking;
+	think_time = 0;
+	if (philo->nb_philos % 2 == 1 && philo->times[t_sleep]
+		< philo->times[t_eat])
+		think_time = philo->times[t_eat] - philo->times[t_sleep];
+	my_usleep(philo, think_time, cur_time);
+	return (true);
+}
+
 void	philo_routine(t_philo *philo)
 {
+	if (philo->nb_philos % 2 == 1)
+		if (philo->id % 2 == 1)
+			usleep(1000);
 	if (philo->id % 2 == 0)
 		philo->state = eating;
 	while (true)
@@ -78,22 +97,6 @@ void	philo_routine(t_philo *philo)
 		else if (philo->state == eating)
 			begin_sleep(philo);
 		else if (philo->state == sleeping)
-		{
-			usleep(500);
-			philo->state = thinking;
-			print_event(*philo, "is thinking",
-				get_timestamp(philo->origin_time));
-		}
+			begin_think(philo);
 	}
 }
-
-// sem_wait(philo->sem_last_meal);
-// my_usleep(philo, START_OFFSET, 0);
-// // if (philo->origin_time.tv_usec > (1000 - START_OFFSET) * 1000)
-// // 	philo->origin_time.tv_sec++;
-// // philo->origin_time.tv_usec
-// // 	= (philo->origin_time.tv_usec + START_OFFSET * 1000) % 1000000;
-// philo->origin_time.tv_usec += START_OFFSET * 1000;
-// philo->origin_time.tv_sec += philo->origin_time.tv_usec / 1000000;
-// philo->origin_time.tv_usec %= 1000000;
-// sem_post(philo->sem_last_meal);

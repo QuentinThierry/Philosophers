@@ -6,7 +6,7 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/03 19:32:26 by qthierry          #+#    #+#             */
-/*   Updated: 2023/08/01 16:30:07 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/08/11 19:41:38 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,12 +31,15 @@ void	destroy_semaphore_threads(t_philo *philo)
 {
 	const char	*error = "Error closing semaphore";
 	char		*name;
+	char		*tmp;
 	int			i;
 
 	i = 1;
 	while (i <= philo->nb_philos)
 	{
-		name = ft_strjoin("philo_last_meal_", ft_itoa(i));
+		tmp = ft_itoa(i);
+		name = ft_strjoin("philo_last_meal_", tmp);
+		free(tmp);
 		if (!name)
 			return (close_semaphores(philo), (void)printf("%s\n", error));
 		sem_unlink(name);
