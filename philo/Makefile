@@ -6,13 +6,13 @@
 #    By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/22 00:29:38 by qthierry          #+#    #+#              #
-#    Updated: 2023/08/11 19:37:54 by qthierry         ###   ########.fr        #
+#    Updated: 2023/08/18 20:53:49 by qthierry         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = philo
 
-CC = cc
+CC = gcc
 CFLAGS = -Wall -Wextra -Werror
 LIBS = -pthread
 INCLUDES = -I$(HEADERS_DIR)
