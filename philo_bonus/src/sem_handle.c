@@ -6,11 +6,11 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/03 19:32:26 by qthierry          #+#    #+#             */
-/*   Updated: 2023/08/11 19:41:38 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/08/18 20:48:24 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/philo.h"
+#include "../includes/philo_bonus.h"
 
 bool	create_semaphore_threads(t_philo *philo)
 {

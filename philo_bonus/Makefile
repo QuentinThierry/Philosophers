@@ -6,18 +6,18 @@
 #    By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/26 19:46:18 by qthierry          #+#    #+#              #
-#    Updated: 2023/07/30 15:18:54 by qthierry         ###   ########.fr        #
+#    Updated: 2023/08/18 20:48:50 by qthierry         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = philo_bonus
 
 CC = gcc
-CFLAGS = -g -Wall -Wextra #-fsanitize=address#-Werror
+CFLAGS = -Wall -Wextra -Werror#-g #-fsanitize=address
 LIBS = -pthread
 INCLUDES = -I$(HEADERS_DIR)
 
-HEADERS_LIST = philo.h
+HEADERS_LIST = philo_bonus.h
 HEADERS_DIR = ./includes/
 HEADERS = $(addprefix $(HEADERS_DIR), $(HEADERS_LIST))
 

@@ -6,11 +6,11 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/03 19:31:27 by qthierry          #+#    #+#             */
-/*   Updated: 2023/08/11 19:56:37 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/08/18 20:48:24 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/philo.h"
+#include "../includes/philo_bonus.h"
 
 void	kill_all_philos(t_philo philo, pid_t *pids)
 {

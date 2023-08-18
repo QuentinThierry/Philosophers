@@ -6,11 +6,11 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/24 18:21:31 by qthierry          #+#    #+#             */
-/*   Updated: 2023/07/30 18:41:01 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/08/18 20:48:24 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/philo.h"
+#include "../includes/philo_bonus.h"
 
 void	my_usleep(t_philo *philo, long delay, long start_time)
 {

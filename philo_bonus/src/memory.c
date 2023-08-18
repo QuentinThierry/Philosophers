@@ -6,11 +6,11 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/24 18:20:52 by qthierry          #+#    #+#             */
-/*   Updated: 2023/05/26 19:54:31 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/08/18 20:48:24 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/philo.h"
+#include "../includes/philo_bonus.h"
 
 void	*ft_calloc(size_t nmemb, size_t size)
 {

@@ -6,11 +6,11 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/26 19:47:09 by qthierry          #+#    #+#             */
-/*   Updated: 2023/08/11 19:56:33 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/08/18 20:48:24 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/philo.h"
+#include "../includes/philo_bonus.h"
 
 // returns -1 for error, 0 for main and 1 for child
 static int	create_philos_processes(int nb_philos, pid_t *pids, t_philo *philo)
