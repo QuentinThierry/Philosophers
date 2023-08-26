@@ -6,14 +6,14 @@
 #    By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/26 19:46:18 by qthierry          #+#    #+#              #
-#    Updated: 2023/08/18 20:48:50 by qthierry         ###   ########.fr        #
+#    Updated: 2023/08/26 19:30:44 by qthierry         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = philo_bonus
 
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror#-g #-fsanitize=address
+CFLAGS = -Wall -Wextra -Werror -g #-fsanitize=thread
 LIBS = -pthread
 INCLUDES = -I$(HEADERS_DIR)
 

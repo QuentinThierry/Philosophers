@@ -6,7 +6,7 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/26 19:47:09 by qthierry          #+#    #+#             */
-/*   Updated: 2023/08/18 20:48:24 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/08/26 19:30:04 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,8 @@ bool	exec_process(t_philo *philo, int value, pid_t *pids, t_timeval time)
 		}
 		sem_wait(philo->sem_end);
 		kill_all_philos(*philo, pids);
+		if (value != 0 && philo->eat_to_end > -2)
+			kill(value, SIGKILL);
 		free(pids);
 	}
 	return (true);

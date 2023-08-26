@@ -6,7 +6,7 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/03 19:32:26 by qthierry          #+#    #+#             */
-/*   Updated: 2023/08/18 20:48:24 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/08/26 18:51:42 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,14 +62,15 @@ void	close_semaphores(t_philo *philo)
 			sem_close(philo->sem_nb_eat_to_end);
 		if (philo->sem_last_meal)
 			sem_close(philo->sem_last_meal);
-		destroy_semaphore_threads(philo);
 	}
+	destroy_semaphore_threads(philo);
 	sem_unlink("/philo_end");
 	sem_unlink("/philo_forks");
 	sem_unlink("/philo_print");
 	sem_unlink("/philo_nb_eat_to_end");
 	sem_unlink("/philo_eat_to_end");
 	sem_unlink("/philo_last_meal");
+	
 }
 
 bool	open_semaphores(t_philo *philo)

@@ -6,7 +6,7 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/03 19:30:04 by qthierry          #+#    #+#             */
-/*   Updated: 2023/08/18 20:48:24 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/08/26 21:05:13 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,10 @@ static void	begin_eat(t_philo *philo)
 	my_usleep(philo, philo->times[t_eat], cur_time);
 	sem_post(philo->sem_forks);
 	sem_post(philo->sem_forks);
+	sem_wait(philo->sem_last_meal);
 	philo->eat_to_end--;
+	philo->nb_actions++;
+	sem_post(philo->sem_last_meal);
 }
 
 static void	begin_sleep(t_philo *philo)
@@ -37,9 +40,33 @@ static void	begin_sleep(t_philo *philo)
 	long	cur_time;
 
 	philo->state = sleeping;
+	philo->nb_actions++;
 	cur_time = get_timestamp(philo->origin_time);
 	print_event(*philo, "is sleeping", cur_time);
 	my_usleep(philo, philo->times[t_sleep], cur_time);
+}
+
+static inline bool	begin_think(t_philo *philo)
+{
+	int		think_time;
+	long	cur_time;
+
+	cur_time = get_timestamp(philo->origin_time);
+	print_event(*philo, "is thinking", cur_time);
+	philo->state = thinking;
+	think_time = 0;
+	if (philo->nb_philos % 2 == 1
+		&& (philo->nb_actions % (philo->nb_philos)) == (philo->id - 1)
+		&& philo->times[t_sleep] <= philo->times[t_eat] * 2)
+	{
+		if (philo->times[t_sleep] <= philo->times[t_eat])
+			think_time = philo->times[t_eat];
+		else
+			think_time = philo->times[t_eat] * 2 - philo->times[t_sleep];
+		philo->nb_actions++;
+	}
+	my_usleep(philo, think_time, cur_time);
+	return (true);
 }
 
 void	*philo_thread_routine(void *philo_arg)
@@ -60,27 +87,11 @@ void	*philo_thread_routine(void *philo_arg)
 				get_timestamp(philo->origin_time), philo->id, "died");
 			return (NULL);
 		}
-		sem_post(philo->sem_last_meal);
 		if (philo->eat_to_end == 0)
 			sem_post(philo->sem_nb_eat_to_end);
+		sem_post(philo->sem_last_meal);
 	}
 	return (NULL);
-}
-
-static inline bool	begin_think(t_philo *philo)
-{
-	int		think_time;
-	long	cur_time;
-
-	cur_time = get_timestamp(philo->origin_time);
-	print_event(*philo, "is thinking", cur_time);
-	philo->state = thinking;
-	think_time = 0;
-	if (philo->nb_philos % 2 == 1 && philo->times[t_sleep]
-		< philo->times[t_eat])
-		think_time = philo->times[t_eat] - philo->times[t_sleep];
-	my_usleep(philo, think_time, cur_time);
-	return (true);
 }
 
 void	philo_routine(t_philo *philo)
@@ -90,6 +101,9 @@ void	philo_routine(t_philo *philo)
 			usleep(1000);
 	if (philo->id % 2 == 0)
 		philo->state = eating;
+	else
+		philo->state = sleeping;
+	// philo->nb_actions = philo->nb_philos;
 	while (true)
 	{
 		if (philo->state == thinking)

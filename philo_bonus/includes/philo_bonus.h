@@ -6,7 +6,7 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 00:43:55 by qthierry          #+#    #+#             */
-/*   Updated: 2023/08/18 20:48:06 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/08/26 19:44:54 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ typedef struct s_philo
 	int				id;
 	int				nb_philos;
 	int				eat_to_end;
+	int				nb_actions;
 	enum e_state	state;
 	t_timeval		origin_time;
 	long			last_meal;
