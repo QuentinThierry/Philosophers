@@ -6,7 +6,7 @@
 /*   By: qthierry <qthierry@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/24 18:25:20 by qthierry          #+#    #+#             */
-/*   Updated: 2023/08/11 19:24:34 by qthierry         ###   ########.fr       */
+/*   Updated: 2023/08/26 18:42:25 by qthierry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,10 @@ bool	fill_philo_2(t_philo *philos)
 		philos[i].is_end = is_end;
 		philos[i].is_start = is_start;
 		philos[i].forks = forks;
-		forks[i++].mut = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
+		if (pthread_mutex_init(&forks[i].mut, NULL) != 0)
+			return (free_mutexs(philos),
+				free(forks), free(is_end), free(is_start), false);
+		i++;
 	}
 	return (true);
 }
